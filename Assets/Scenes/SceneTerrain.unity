@@ -868,7 +868,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc9278e61e7068e41a429a086304a673, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  vitesseTourne: {x: 0, y: 2, z: 0}
+  vitesseTourne: {x: 0, y: 0, z: 0}
+  vitesseTourneMaximale: 250
+  moteurEnMarche: 0
 --- !u!1 &1576160393 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 612d96aee3f939c44ba3eeb7537a66b5, type: 3}
@@ -1078,7 +1080,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc9278e61e7068e41a429a086304a673, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  vitesseTourne: {x: 0, y: 5, z: 0}
+  vitesseTourne: {x: 0, y: 0, z: 0}
+  vitesseTourneMaximale: 360
+  moteurEnMarche: 0
 --- !u!1 &2103246574
 GameObject:
   m_ObjectHideFlags: 0
