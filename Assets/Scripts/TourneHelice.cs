@@ -33,6 +33,7 @@ public class TourneHelice : MonoBehaviour
         else{
             if(vitesseTourne.y>0){
                 vitesseTourne.y--;
+                //vitesseTourne.y = Mathf.Clamp(vitesseTourne.y-= 1f, 0f, vitesseTourneMaximale);
             }
         }
          transform.Rotate(vitesseTourne * Time.deltaTime);
