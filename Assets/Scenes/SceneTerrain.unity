@@ -828,7 +828,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a0f8d9c688244a4da57538902d2fa40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  vitesseAvant: 0
+  vitesseAvantMax: 10000
+  vitesseTourne: 1000
+  vitesseMonte: 1000
   refHeliceAvant: {fileID: 1996508043}
+  forceAcceleration: 20
 --- !u!1001 &1878029541
 PrefabInstance:
   m_ObjectHideFlags: 0

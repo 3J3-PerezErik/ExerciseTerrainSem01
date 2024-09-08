@@ -5,12 +5,16 @@ using UnityEngine;
 
 public class DeplacementHelico : MonoBehaviour
 {
-    float vitesseAvant = 0f;
-    float vitesseAvantMax = 10000f;
-    float vitesseTourne = 1000f;
-    float vitesseMonte = 1000f; 
+    public float vitesseAvant;
+    public float vitesseAvantMax;
+    public float vitesseTourne;
+    public float vitesseMonte; 
 
     public GameObject refHeliceAvant;
+
+    float forceRotation;
+    float forceMonte;
+    public float forceAcceleration;
     // Start is called before the first frame update
     void Start()
     {
@@ -20,22 +24,19 @@ public class DeplacementHelico : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-      float valeurAxeH = Input.GetAxis("Horizontal");  
-      vitesseTourne *= valeurAxeH;
+      forceRotation = Input.GetAxis("Horizontal");  
+      forceRotation*=vitesseTourne;
 
-      float valeurAxeV = Input.GetAxis("Vertical");
-      vitesseMonte *=valeurAxeV;
+      forceMonte = Input.GetAxis("Vertical");
+      forceMonte *=vitesseMonte;
       
-      if(Input.GetKeyDown(KeyCode.E)){
-        if(vitesseAvant < vitesseAvantMax){
-            vitesseAvant+=5;
-        }
+      if(Input.GetKey(KeyCode.E) && vitesseAvant < vitesseAvantMax){
+        vitesseAvant+=forceAcceleration;
       }
-      else if(Input.GetKeyDown(KeyCode.Q)){
-        if(vitesseAvant>0){
-            vitesseAvant-=5;
-        }
+      else if(Input.GetKey(KeyCode.Q) && vitesseAvant>0){
+        vitesseAvant-=forceAcceleration;
       }
+      transform.localEulerAngles =  new Vector3(0f , transform.localEulerAngles.y ,0f);
     }
 
     void FixedUpdate(){
@@ -45,14 +46,11 @@ public class DeplacementHelico : MonoBehaviour
 
         if(vitesseHeliceAvantActuelle.y==vitesseHeliceAvantMaximale){
             GetComponent<Rigidbody>().useGravity = false;
-
-            GetComponent<Rigidbody>().AddRelativeTorque(0f, vitesseTourne, 0f);
-            GetComponent<Rigidbody>().AddRelativeForce(0f,vitesseMonte,vitesseAvant);
-
-            transform.localEulerAngles =  new Vector3(0f , transform.localEulerAngles.y ,0f);
+            GetComponent<Rigidbody>().AddRelativeTorque(0f, forceRotation, 0f);
+            GetComponent<Rigidbody>().AddRelativeForce(0f,forceMonte,vitesseAvant);
         }
         else if(refHeliceAvant.GetComponent<TourneHelice>().moteurEnMarche==false){
             GetComponent<Rigidbody>().useGravity = true;
         }
-    }
+    } 
 }
