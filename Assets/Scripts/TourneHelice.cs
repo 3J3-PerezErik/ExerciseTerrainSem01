@@ -9,6 +9,8 @@ public class TourneHelice : MonoBehaviour
     public float vitesseTourneMaximale;
     public bool moteurEnMarche;
 
+    public float acceleration;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -27,12 +29,12 @@ public class TourneHelice : MonoBehaviour
 
         if (moteurEnMarche) {
             if(vitesseTourne.y<vitesseTourneMaximale){
-                vitesseTourne.y++;
+                vitesseTourne.y+=acceleration;
             }
         }
         else{
             if(vitesseTourne.y>0){
-                vitesseTourne.y--;
+                vitesseTourne.y-=acceleration;
                 //vitesseTourne.y = Mathf.Clamp(vitesseTourne.y-= 1f, 0f, vitesseTourneMaximale);
             }
         }
