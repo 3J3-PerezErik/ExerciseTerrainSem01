@@ -37,6 +37,25 @@ public class DeplacementHelico : MonoBehaviour
         vitesseAvant-=forceAcceleration;
       }
       transform.localEulerAngles =  new Vector3(0f , transform.localEulerAngles.y ,0f);
+
+      //Ajuster le volume en fonction de la vitesse de  l'hélice
+      if(refHeliceAvant.GetComponent<TourneHelice>().moteurEnMarche){
+        GetComponent<AudioSource>().Play();
+        GetComponent<AudioSource>().volume = refHeliceAvant.GetComponent<TourneHelice>().vitesseTourne.y / refHeliceAvant.GetComponent<TourneHelice>().vitesseTourneMaximale;
+        if(GetComponent<AudioSource>().pitch<=1){
+          GetComponent<AudioSource>().pitch = 0.5f + refHeliceAvant.GetComponent<TourneHelice>().vitesseTourne.y / refHeliceAvant.GetComponent<TourneHelice>().vitesseTourneMaximale;
+        }
+      }
+      else{
+        GetComponent<AudioSource>().Stop();
+        GetComponent<AudioSource>().volume = refHeliceAvant.GetComponent<TourneHelice>().vitesseTourne.y / refHeliceAvant.GetComponent<TourneHelice>().vitesseTourneMaximale;
+        if(GetComponent<AudioSource>().pitch>0.5f){
+          GetComponent<AudioSource>().pitch = 0.5f + refHeliceAvant.GetComponent<TourneHelice>().vitesseTourne.y / refHeliceAvant.GetComponent<TourneHelice>().vitesseTourneMaximale;
+        }
+      }
+      if(Input.GetKeyDown(KeyCode.M)){
+        AudioListener.pause = !AudioListener.pause;
+      }
     }
 
     void FixedUpdate(){
