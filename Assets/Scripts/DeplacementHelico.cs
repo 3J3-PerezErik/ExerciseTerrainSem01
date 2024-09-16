@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
-
+using UnityEngine.SceneManagement;
 public class DeplacementHelico : MonoBehaviour
 {
     public float vitesseAvant;
@@ -18,6 +18,8 @@ public class DeplacementHelico : MonoBehaviour
     public float forceAcceleration;
     Boolean finJeu;
     public GameObject explosion;
+    public AudioClip sonCollecte;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -51,10 +53,9 @@ public class DeplacementHelico : MonoBehaviour
           }
         }
         else{
-          GetComponent<AudioSource>().Stop();
           GetComponent<AudioSource>().volume = refHeliceAvant.GetComponent<TourneHelice>().vitesseTourne.y / refHeliceAvant.GetComponent<TourneHelice>().vitesseTourneMaximale;
-          if(GetComponent<AudioSource>().pitch>0.5f){
-            GetComponent<AudioSource>().pitch = 0.5f + refHeliceAvant.GetComponent<TourneHelice>().vitesseTourne.y / refHeliceAvant.GetComponent<TourneHelice>().vitesseTourneMaximale;
+          if(GetComponent<AudioSource>().pitch>=0.5f){
+            GetComponent<AudioSource>().pitch =refHeliceAvant.GetComponent<TourneHelice>().vitesseTourne.y / refHeliceAvant.GetComponent<TourneHelice>().vitesseTourneMaximale;
           }
         }
         if(Input.GetKeyDown(KeyCode.M)){
@@ -62,7 +63,7 @@ public class DeplacementHelico : MonoBehaviour
         }
       }
       else{
-
+        Invoke("FinDuJeu", 8f);
       }
     }
 
@@ -93,5 +94,16 @@ public class DeplacementHelico : MonoBehaviour
         refHeliceArriere.GetComponent<TourneHelice>().vitesseTourne.y = 0f;
         GetComponent<AudioSource>().Stop();
       }
+    }
+    private void OnTriggerEnter(Collider infosCollision){
+      if(infosCollision.gameObject.tag =="bidon"){
+        Destroy(infosCollision.gameObject);
+         GetComponent<AudioSource>().PlayOneShot(sonCollecte);
+      }
+    }
+    void FinDuJeu(){
+        // relance la scène
+        SceneManager.LoadScene("SceneTerrain");
+
     } 
 }
