@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -11,10 +12,12 @@ public class DeplacementHelico : MonoBehaviour
     public float vitesseMonte; 
 
     public GameObject refHeliceAvant;
-
+    public GameObject refHeliceArriere;
     float forceRotation;
     float forceMonte;
     public float forceAcceleration;
+    Boolean finJeu;
+    public GameObject explosion;
     // Start is called before the first frame update
     void Start()
     {
@@ -24,37 +27,42 @@ public class DeplacementHelico : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-      forceRotation = Input.GetAxis("Horizontal");  
-      forceRotation*=vitesseTourne;
+      if(!finJeu){
+        forceRotation = Input.GetAxis("Horizontal");  
+        forceRotation*=vitesseTourne;
 
-      forceMonte = Input.GetAxis("Vertical");
-      forceMonte *=vitesseMonte;
-      
-      if(Input.GetKey(KeyCode.E) && vitesseAvant < vitesseAvantMax){
-        vitesseAvant+=forceAcceleration;
-      }
-      else if(Input.GetKey(KeyCode.Q) && vitesseAvant>0){
-        vitesseAvant-=forceAcceleration;
-      }
-      transform.localEulerAngles =  new Vector3(0f , transform.localEulerAngles.y ,0f);
+        forceMonte = Input.GetAxis("Vertical");
+        forceMonte *=vitesseMonte;
+        
+        if(Input.GetKey(KeyCode.E) && vitesseAvant < vitesseAvantMax){
+          vitesseAvant+=forceAcceleration;
+        }
+        else if(Input.GetKey(KeyCode.Q) && vitesseAvant>0){
+          vitesseAvant-=forceAcceleration;
+        }
+        transform.localEulerAngles =  new Vector3(0f , transform.localEulerAngles.y ,0f);
 
-      //Ajuster le volume en fonction de la vitesse de  l'hélice
-      if(refHeliceAvant.GetComponent<TourneHelice>().moteurEnMarche){
-        GetComponent<AudioSource>().Play();
-        GetComponent<AudioSource>().volume = refHeliceAvant.GetComponent<TourneHelice>().vitesseTourne.y / refHeliceAvant.GetComponent<TourneHelice>().vitesseTourneMaximale;
-        if(GetComponent<AudioSource>().pitch<=1){
-          GetComponent<AudioSource>().pitch = 0.5f + refHeliceAvant.GetComponent<TourneHelice>().vitesseTourne.y / refHeliceAvant.GetComponent<TourneHelice>().vitesseTourneMaximale;
+        //Ajuster le volume en fonction de la vitesse de  l'hélice
+        if(refHeliceAvant.GetComponent<TourneHelice>().moteurEnMarche){
+          GetComponent<AudioSource>().Play();
+          GetComponent<AudioSource>().volume = refHeliceAvant.GetComponent<TourneHelice>().vitesseTourne.y / refHeliceAvant.GetComponent<TourneHelice>().vitesseTourneMaximale;
+          if(GetComponent<AudioSource>().pitch<=1){
+            GetComponent<AudioSource>().pitch = 0.5f + refHeliceAvant.GetComponent<TourneHelice>().vitesseTourne.y / refHeliceAvant.GetComponent<TourneHelice>().vitesseTourneMaximale;
+          }
+        }
+        else{
+          GetComponent<AudioSource>().Stop();
+          GetComponent<AudioSource>().volume = refHeliceAvant.GetComponent<TourneHelice>().vitesseTourne.y / refHeliceAvant.GetComponent<TourneHelice>().vitesseTourneMaximale;
+          if(GetComponent<AudioSource>().pitch>0.5f){
+            GetComponent<AudioSource>().pitch = 0.5f + refHeliceAvant.GetComponent<TourneHelice>().vitesseTourne.y / refHeliceAvant.GetComponent<TourneHelice>().vitesseTourneMaximale;
+          }
+        }
+        if(Input.GetKeyDown(KeyCode.M)){
+          AudioListener.pause = !AudioListener.pause;
         }
       }
       else{
-        GetComponent<AudioSource>().Stop();
-        GetComponent<AudioSource>().volume = refHeliceAvant.GetComponent<TourneHelice>().vitesseTourne.y / refHeliceAvant.GetComponent<TourneHelice>().vitesseTourneMaximale;
-        if(GetComponent<AudioSource>().pitch>0.5f){
-          GetComponent<AudioSource>().pitch = 0.5f + refHeliceAvant.GetComponent<TourneHelice>().vitesseTourne.y / refHeliceAvant.GetComponent<TourneHelice>().vitesseTourneMaximale;
-        }
-      }
-      if(Input.GetKeyDown(KeyCode.M)){
-        AudioListener.pause = !AudioListener.pause;
+
       }
     }
 
@@ -71,5 +79,19 @@ public class DeplacementHelico : MonoBehaviour
         else if(refHeliceAvant.GetComponent<TourneHelice>().moteurEnMarche==false){
             GetComponent<Rigidbody>().useGravity = true;
         }
+    }
+
+    private void OnCollisionEnter(Collision infosCollision){
+      if(infosCollision.gameObject.name == "Terrain"){
+        finJeu=true;
+        explosion.SetActive(true);
+        GetComponent<Rigidbody>().useGravity = true;
+        GetComponent<Rigidbody>().drag = 0.5f;
+        GetComponent<Rigidbody>().angularDrag = 0.5f;
+        GetComponent<Rigidbody>().freezeRotation = false;
+        refHeliceAvant.GetComponent<TourneHelice>().vitesseTourne.y = 0f;
+        refHeliceArriere.GetComponent<TourneHelice>().vitesseTourne.y = 0f;
+        GetComponent<AudioSource>().Stop();
+      }
     } 
 }

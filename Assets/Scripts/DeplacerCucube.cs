@@ -1,15 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class DeplacerCucube : MonoBehaviour
 {
 
-     public float multplicateurForce; 
+    public float multplicateurForce; 
+    public float multplicateurRotation;
     float forceDeplacement;
-
     float forceTorsion;
+    public AudioClip sonCollecte;
+    public GameObject explosion;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -24,7 +29,7 @@ public class DeplacerCucube : MonoBehaviour
         forceDeplacement =  valeurAxeV * multplicateurForce;
 
         float valeurAxeH = Input.GetAxis("Horizontal"); //Retourne une valeur entre -1 et 1   
-        forceTorsion =  valeurAxeH * multplicateurForce;
+        forceTorsion =  valeurAxeH * multplicateurRotation;
     }
 
     // Fonction stable a 50 FPS, réservé aux objets physiques
@@ -35,4 +40,34 @@ public class DeplacerCucube : MonoBehaviour
         GetComponent<Rigidbody>().AddRelativeForce(0f,0f,forceDeplacement);
         GetComponent<Rigidbody>().AddRelativeTorque(0f, forceTorsion,0f);
     }
+
+    private void OnCollisionEnter(Collision infosCollision){
+        if(infosCollision.gameObject.name == "Mur"){
+            explosion.SetActive(true);
+            Invoke("FinDuJeu", 5f);
+        }
+    }
+    
+    private void OnTriggerEnter(Collider infosCollision){
+
+        if(infosCollision.gameObject.tag == "objetCollecte"){
+            // Destroy(infosCollision.gameObject);
+            infosCollision.gameObject.SetActive(false);
+            StartCoroutine(ReactiveBouleRouge(infosCollision.gameObject));
+            GetComponent<AudioSource>().PlayOneShot(sonCollecte);
+        }
+
+    }
+
+    IEnumerator ReactiveBouleRouge(GameObject quelleBoule){
+        yield return new WaitForSeconds(2f);
+        quelleBoule.gameObject.SetActive(true);
+    }
+
+    void FinDuJeu(){
+        // relance la scène
+        SceneManager.LoadScene("SceneTerrain");
+
+    }
+
 }
