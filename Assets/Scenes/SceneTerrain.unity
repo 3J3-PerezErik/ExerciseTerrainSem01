@@ -1732,7 +1732,7 @@ MonoBehaviour:
   vitesseMonte: 1000
   refHeliceAvant: {fileID: 1996508043}
   refHeliceArriere: {fileID: 1468960343}
-  forceAcceleration: 2000
+  forceAcceleration: 100
   explosion: {fileID: 2122283981}
   sonCollecte: {fileID: 8300000, guid: fd97f923a6d8f41f6887d2dc55ad87d8, type: 3}
 --- !u!4 &1576160399 stripped

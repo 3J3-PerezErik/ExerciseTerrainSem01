@@ -30,21 +30,25 @@ public class DeplacementHelico : MonoBehaviour
     void Update()
     {
       if(!finJeu){
+        //Rotation de l'hélico
         forceRotation = Input.GetAxis("Horizontal");  
         forceRotation*=vitesseTourne;
 
+        //Mouvement vertical de l'hélico (monte ou descend)
         forceMonte = Input.GetAxis("Vertical");
         forceMonte *=vitesseMonte;
         
+        //Pour augmenter vitesse avant
         if(Input.GetKey(KeyCode.E) && vitesseAvant < vitesseAvantMax){
           vitesseAvant+=forceAcceleration;
         }
+        //Pour diminuer vitesse avant
         else if(Input.GetKey(KeyCode.Q) && vitesseAvant>0){
           vitesseAvant-=forceAcceleration;
         }
         transform.localEulerAngles =  new Vector3(0f , transform.localEulerAngles.y ,0f);
 
-        //Ajuster le volume en fonction de la vitesse de  l'hélice
+        //Ajuster le volume et pitch en fonction de la vitesse de  l'hélice
         if(refHeliceAvant.GetComponent<TourneHelice>().moteurEnMarche){
           GetComponent<AudioSource>().Play();
           GetComponent<AudioSource>().volume = refHeliceAvant.GetComponent<TourneHelice>().vitesseTourne.y / refHeliceAvant.GetComponent<TourneHelice>().vitesseTourneMaximale;
@@ -60,7 +64,7 @@ public class DeplacementHelico : MonoBehaviour
         }
         if(Input.GetKeyDown(KeyCode.M)){
           AudioListener.pause = !AudioListener.pause;
-        }
+        } 
       }
       else{
         Invoke("FinDuJeu", 8f);
@@ -105,5 +109,17 @@ public class DeplacementHelico : MonoBehaviour
         // relance la scène
         SceneManager.LoadScene("SceneTerrain");
 
+    }
+
+    public void ExplosionHelico(){
+      finJeu=true;
+      explosion.SetActive(true);
+      GetComponent<Rigidbody>().useGravity = true;
+      GetComponent<Rigidbody>().drag = 0.5f;
+      GetComponent<Rigidbody>().angularDrag = 0.5f;
+      GetComponent<Rigidbody>().freezeRotation = false;
+      refHeliceAvant.GetComponent<TourneHelice>().vitesseTourne.y = 0f;
+      refHeliceArriere.GetComponent<TourneHelice>().vitesseTourne.y = 0f;
+      GetComponent<AudioSource>().Stop();
     } 
 }
