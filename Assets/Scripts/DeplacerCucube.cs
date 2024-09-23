@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class DeplacerCucube : MonoBehaviour
 {
@@ -15,10 +16,15 @@ public class DeplacerCucube : MonoBehaviour
     public AudioClip sonCollecte;
     public GameObject explosion;
 
+    //Gestion de l'essence
+    public float niveauEssenceMax;
+    public float niveauEssenceCourant;
+    public Image imgNiveaauEssence;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        niveauEssenceCourant = niveauEssenceMax;
     }
 
     // On se sert de udpdate pour détecter les touches, mais on applique les forces au rigidbodies
@@ -30,6 +36,8 @@ public class DeplacerCucube : MonoBehaviour
 
         float valeurAxeH = Input.GetAxis("Horizontal"); //Retourne une valeur entre -1 et 1   
         forceTorsion =  valeurAxeH * multplicateurRotation;
+
+        GestionEssence();
     }
 
     // Fonction stable a 50 FPS, réservé aux objets physiques
@@ -52,6 +60,7 @@ public class DeplacerCucube : MonoBehaviour
 
         if(infosCollision.gameObject.tag == "objetCollecte"){
             // Destroy(infosCollision.gameObject);
+            niveauEssenceCourant +=25;
             infosCollision.gameObject.SetActive(false);
             StartCoroutine(ReactiveBouleRouge(infosCollision.gameObject));
             GetComponent<AudioSource>().PlayOneShot(sonCollecte);
@@ -68,6 +77,15 @@ public class DeplacerCucube : MonoBehaviour
         // relance la scène
         SceneManager.LoadScene("SceneTerrain");
 
+    }
+
+    void GestionEssence(){
+        niveauEssenceCourant -=50 * Time.deltaTime;
+        float pourcentageEssenceRestant = niveauEssenceCourant / niveauEssenceMax;
+
+        //Ajuste la hauteur de la barre blanche qui représente le niveau d'essence
+        //C'est la propriété fill amount
+        imgNiveaauEssence.fillAmount = pourcentageEssenceRestant;
     }
 
 }
