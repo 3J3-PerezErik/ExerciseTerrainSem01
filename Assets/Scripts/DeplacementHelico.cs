@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 public class DeplacementHelico : MonoBehaviour
 {
     public float vitesseAvant;
@@ -20,10 +21,15 @@ public class DeplacementHelico : MonoBehaviour
     public GameObject explosion;
     public AudioClip sonCollecte;
 
+    //Gestion de l'essence
+    public float niveauEssenceMax;
+    public float niveauEssenceCourant;
+    public Image imgNiveauEssence;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        niveauEssenceCourant = niveauEssenceMax;
     }
 
     // Update is called once per frame
@@ -84,25 +90,21 @@ public class DeplacementHelico : MonoBehaviour
         else if(refHeliceAvant.GetComponent<TourneHelice>().moteurEnMarche==false){
             GetComponent<Rigidbody>().useGravity = true;
         }
+        if(refHeliceAvant.GetComponent<TourneHelice>().moteurEnMarche){
+          GestionEssence();
+        }
     }
 
     private void OnCollisionEnter(Collision infosCollision){
       if(infosCollision.gameObject.name == "Terrain"){
-        finJeu=true;
-        explosion.SetActive(true);
-        GetComponent<Rigidbody>().useGravity = true;
-        GetComponent<Rigidbody>().drag = 0.5f;
-        GetComponent<Rigidbody>().angularDrag = 0.5f;
-        GetComponent<Rigidbody>().freezeRotation = false;
-        refHeliceAvant.GetComponent<TourneHelice>().vitesseTourne.y = 0f;
-        refHeliceArriere.GetComponent<TourneHelice>().vitesseTourne.y = 0f;
-        GetComponent<AudioSource>().Stop();
+          ExplosionHelico();
       }
     }
     private void OnTriggerEnter(Collider infosCollision){
       if(infosCollision.gameObject.tag =="bidon"){
+        niveauEssenceCourant +=70;
         Destroy(infosCollision.gameObject);
-         GetComponent<AudioSource>().PlayOneShot(sonCollecte);
+        GetComponent<AudioSource>().PlayOneShot(sonCollecte);
       }
     }
     void FinDuJeu(){
@@ -121,5 +123,22 @@ public class DeplacementHelico : MonoBehaviour
       refHeliceAvant.GetComponent<TourneHelice>().vitesseTourne.y = 0f;
       refHeliceArriere.GetComponent<TourneHelice>().vitesseTourne.y = 0f;
       GetComponent<AudioSource>().Stop();
+    }
+    void GestionEssence(){
+        niveauEssenceCourant -=3 * Time.deltaTime;
+        float pourcentageEssenceRestant = niveauEssenceCourant / niveauEssenceMax;
+
+        //Ajuste la hauteur de la barre blanche qui représente le niveau d'essence
+        //C'est la propriété fill amount
+        imgNiveauEssence.fillAmount = pourcentageEssenceRestant;
+        if(imgNiveauEssence.fillAmount==0){
+          GetComponent<Rigidbody>().useGravity = true;
+          GetComponent<Rigidbody>().drag = 0.5f;
+          GetComponent<Rigidbody>().angularDrag = 0.5f;
+          GetComponent<Rigidbody>().freezeRotation = false;
+          refHeliceAvant.GetComponent<TourneHelice>().vitesseTourne.y = 0f;
+          refHeliceArriere.GetComponent<TourneHelice>().vitesseTourne.y = 0f;
+          GetComponent<AudioSource>().Stop();
+        }
     } 
 }
