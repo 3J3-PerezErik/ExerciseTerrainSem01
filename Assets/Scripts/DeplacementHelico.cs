@@ -96,7 +96,7 @@ public class DeplacementHelico : MonoBehaviour
     }
 
     private void OnCollisionEnter(Collision infosCollision){
-      if(infosCollision.gameObject.name == "Terrain"){
+      if(infosCollision.gameObject.name == "Terrain" || infosCollision.gameObject.name =="Drone"){
           ExplosionHelico();
       }
     }
